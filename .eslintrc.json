@@ -1,0 +1,7 @@
+{
+    "rules": {
+        "no-unused-vars": "warn",
+        "no-extra-semi": "warn",
+        "semi": "error"
+    }
+}

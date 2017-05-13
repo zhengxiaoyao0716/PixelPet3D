@@ -1,0 +1,19 @@
+body {
+    margin: 0;
+    background: #000;
+    color: #fff;
+}
+#container {
+    line-height: 0;
+}
+#container>canvas[data-pp3d-size="maxim"] {
+    display: block;
+    max-width: 100%;
+}
+#container>canvas[data-pp3d-size="medium"] {
+    display: inline-block;
+    max-width: 50%;
+}
+#container>canvas[data-pp3d-size="hidden"] {
+    display: none;
+}

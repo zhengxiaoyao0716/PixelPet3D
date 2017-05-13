@@ -7,42 +7,33 @@
     <meta charset="UTF-8" />
     <meta name="Keywords" content="" />
     <meta name="Description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="x5-fullscreen" content="true">
     <link rel="shortcut icon" href="http://os.zheng0716.com/static/image/favicon.ico" />
-    <title>Pixel Pet 3D</title>
+    <title>{{ info['name'] }}: {{ info['version'] }}</title>
+    <link href="./static/style/index.css" rel="stylesheet" />
 </head>
 
 <body>
+    <!--<canvas width="1000px" height="1000px"></canvas>-->
+    <div id="container"></div>
+
     <div>
-        <p>{{ info['name'] }}: {{ info['version'] }}</p>
         <p>Author: {{ info['author'] }}</p>
         <p>Address: {{ info['address'] }}</p>
     </div>
-    <div style="background: #03A9F4; width: 100%; margin-top: 150px; color: white; font-size: 120px; text-align: center; font-family: arial,tahoma,'Microsoft Yahei','\5b8b\4f53',sans-serif;">Hello world</div>
-    <script type="text/javascript">
-        {
-            const ws = new WebSocket("ws://localhost:5000/ws");
-            // ws.addEventListener("open", (e) => {
-            //     console.log(e);
-            // });
-            ws.addEventListener("message", (e) => (({event, data}) =>{
-                ({
-                    "init": (data) => {
-                        console.log(data);
-                    },
-                    "text": (data) => {
-                        console.log(data);
-                    },
-                    "action": (data) => {
-                        console.log(data);
-                    },
-                })[event](data)
-            })(JSON.parse(e.data)));
-            // ws.addEventListener("close", (e) => {
-            //     console.log(e);
-            // });
-            setTimeout(() => ws.send("Hello"), 1000);
-        }
-    </script>
+    <!-- scripts -->
+    <div style="display: none;">
+        <script src="./static/script/three.min.js"></script>
+        <!--<script src="https://cdn.bootcss.com/three.js/r83/three.min.js"></script>-->
+        <!--<script src="https://cdn.jsdelivr.net/threejs/0.85.2/three.min.js"></script>-->
+        <script src="./static/script/pp3d.js"></script>
+        <script src="./static/asset/model/test.model.js"></script>
+        <!--<script src="./static/script/websocket.js"></script>-->
+    </div>
 </body>
 
 </html>
