@@ -7,7 +7,7 @@
 __PP3D_MODEL PP3DModel = {
     SideLen : sideLen,
     Cube : {{{0}}},
-    Load: load,
-    Dump: dump,
-    Projection: projection,
+    Load : load,
+    Dump : dump,
+    Projection : projection,
 };
