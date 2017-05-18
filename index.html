@@ -13,26 +13,20 @@
     <meta name="x5-orientation" content="portrait">
     <meta name="x5-fullscreen" content="true">
     <link rel="shortcut icon" href="http://os.zheng0716.com/static/image/favicon.ico" />
-    <title>{{ info['name'] }}: {{ info['version'] }}</title>
+    <title>Pixel Pet 3D</title>
     <link href="./static/style/index.css" rel="stylesheet" />
 </head>
 
 <body>
-    <!--<canvas width="1000px" height="1000px"></canvas>-->
     <div id="container"></div>
+    <div id="infoPanel"></div>
 
-    <div>
-        <p>Author: {{ info['author'] }}</p>
-        <p>Address: {{ info['address'] }}</p>
-    </div>
     <!-- scripts -->
     <div style="display: none;">
         <script src="./static/script/three.min.js"></script>
-        <!--<script src="https://cdn.bootcss.com/three.js/r83/three.min.js"></script>-->
-        <!--<script src="https://cdn.jsdelivr.net/threejs/0.85.2/three.min.js"></script>-->
         <script src="./static/script/pp3d.js"></script>
         <script src="./static/asset/model/test.model.js"></script>
-        <!--<script src="./static/script/websocket.js"></script>-->
+        <script src="./static/script/websocket.js"></script>
     </div>
 </body>
 
