@@ -1,14 +1,4 @@
 #include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
-
-#ifdef __linux
-#include <conio4linux.h>
-#include "main.linux.c.h"
-#else
-#include <conio.h>
-#include "main.c.h"
-#endif
 
 // ================================
 // #include "pp3d_g.h"
@@ -17,27 +7,26 @@
 // 工程结构基本确定后应整理到头文件里去
 #include "config/config.h"
 #include "model/model.h"
+#include "server/server.h"
 
 __PP3D_CONFIG Config = PP3DConfig;
 typedef PP3DInfoType InfoType;
 
 __PP3D_MODEL Model = PP3DModel;
+
+__PP3D_SERVER Server = PP3DServer;
+typedef PP3DHandler Handler;
 // ================================
+
+static void handler(IN char *recvBuf, OUT char *sendBuf)
+{
+	printf("recv: %s\n", recvBuf);
+	InfoType Info = Config.Info;
+	sprintf(sendBuf, "%s: %s\nAuthor: %s\nAddress: %s", Info.Name, Info.Vers, Info.Auth, Info.Addr);
+}
 
 int main(int argc, char **argv)
 {
-	//'clc' for windows, 'clear' for linux
-	if (system("cls") != 0)
-	{
-		system("clear");
-	}
-	server();
-
-	InfoType Info = Config.Info;
-	printf("%s: %s\nAuthor: %s\nAddress: %s\n", Info.Name, Info.Vers, Info.Auth, Info.Addr);
-
-	fflush(stdin);
-	printf("\n\t按下任意键退出\n");
-	getch();
+	Server.Run(handler);
 	return 0;
 }

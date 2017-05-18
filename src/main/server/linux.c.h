@@ -1,12 +1,13 @@
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 
 static char SERVER_ADDR[] = "./.pp3d-core.sock";
 static const int SOCKADDR_LEN = sizeof(struct sockaddr_un);
 
-void server()
+static void server(PP3DHandler handler)
 {
 	unlink(SERVER_ADDR);
 
@@ -31,33 +32,23 @@ void server()
 		exit(EXIT_FAILURE);
 	}
 
+	printf("[ Listen %s ]\n", SERVER_ADDR);
 	while (true)
 	{
 		struct sockaddr_un connectAddr;
 		socklen_t connectAddrLen = SOCKADDR_LEN;
 
-		// Recv
-		char recvBuf[BUFSIZ] = {0};
-		if (recvfrom(sockfd, recvBuf, BUFSIZ, 0, (sockaddr*)&connectAddr, &connectAddrLen) > 0)
-		{
-			printf("recv: %s\n", recvBuf);
-		}
-		else
+		char recvBuf[BUFSIZ] = {0}, sendBuf[BUFSIZ] = {0};
+		if (recvfrom(sockfd, recvBuf, BUFSIZ, 0, (sockaddr *)&connectAddr, &connectAddrLen) == -1)
 		{
 			perror("recv failed\n");
-			exit(EXIT_FAILURE);
+			continue;
 		}
-
-		// Send
-		char sendBuf[BUFSIZ] = "pong";
-		if (sendto(sockfd, sendBuf, BUFSIZ, 0, (sockaddr*)&connectAddr, connectAddrLen) > 0)
-		{
-			printf("send: %s\n", sendBuf);
-		}
-		else
+		handler(recvBuf, sendBuf);
+		if (sendto(sockfd, sendBuf, BUFSIZ, 0, (sockaddr *)&connectAddr, connectAddrLen) == -1)
 		{
 			perror("send failed\n");
-			exit(EXIT_FAILURE);
+			continue;
 		}
 	}
 
