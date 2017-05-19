@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ -f "stop.sh" ]; then
+    ./stop.sh
+fi
+
 branchs=("core" "browser" "server")
 for branch in ${branchs[@]}; do
     outdir=PixelPet3D-$branch
@@ -62,7 +66,14 @@ while : ; do
     fi
 done
 
-trap "./stop.sh; exit 2" 1 2 3 15
-
 echo -e ""
+
+while getopts "dh" opt; do
+    case $opt in
+        d) exit 0;;
+        ?) echo -e "* Use '-d' argument to run in background.";;
+    esac
+done
+
+trap "./stop.sh; exit 2" 1 2 3 15
 tail -f PixelPet3D-core/nohup.out PixelPet3D-server/nohup.out
