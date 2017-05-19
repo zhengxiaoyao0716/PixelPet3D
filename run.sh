@@ -1,13 +1,12 @@
 #!/bin/bash
 
 branchs=("core" "browser" "server")
-for branch in ${branchs[@]}
-do
+for branch in ${branchs[@]}; do
     outdir=PixelPet3D-$branch
     if [ ! -d "$outdir" ]; then
         echo -e "\n> Clone '$branch' branch:"
         git clone git@github.com:zhengxiaoyao0716/PixelPet3D.git -b $branch $outdir
-        echo -e "> Cloned into '$outdir'."
+        echo -e "< Cloned into '$outdir'."
     fi
 done
 
@@ -17,7 +16,7 @@ make build
 nohup ./out/PixelPet3D-core &
 core_pid=$!
 cd ..
-echo -e "> Core-module runing, pid=$core_pid, logged to PixelPet3D-core/nohup.out."
+echo -e "< Core-module runing, pid=$core_pid, logged to PixelPet3D-core/nohup.out."
 
 echo -e "\n> Config and start server from 'server' branch:"
 cd PixelPet3D-server
@@ -25,12 +24,35 @@ chmod u+x main.py
 nohup ./main.py -u &
 server_pid=$!
 cd ..
-echo -e "> Server started, pid=$server_pid, logged to PixelPet3D-server/nohup.out."
+echo -e "< Server started, pid=$server_pid, logged to PixelPet3D-server/nohup.out."
 
-trap "kill $core_pid $server_pid; rm .pp3d-*.sock */nohup.out stop.sh -f; echo -e \"\n> Stop and clean.\"; exit 2" 1 2 3 15
+clean="#!/bin/bash\n"
+clean=$clean"\n"
+clean=$clean"echo -e \"\0134n> Stop and clean:\";\n"
+clean=$clean"\n"
+clean=$clean"core_pid=$core_pid\n"
+clean=$clean"server_pid=$server_pid\n"
+clean=$clean"\n"
+clean=$clean"branchs=(\"core\" \"server\")\n"
+clean=$clean"for branch in \${branchs[@]}; do\n"
+clean=$clean"\tpidvar=\\\$\${branch}_pid\n"
+clean=$clean"\tpid=\`eval echo \$pidvar\`\n"
+clean=$clean"\tcwd=/proc/\$pid/cwd\n"
+clean=$clean"\tif [ -d \"\$cwd\" ]; then\n"
+clean=$clean"\t\tif [[ \`ls -l \$cwd | awk '{print \$11}'\` =~ \"PixelPet3D-\$branch\" ]]; then\n"
+clean=$clean"\t\t\tkill \$pid\n"
+clean=$clean"\t\t\techo -e \"* Killed \$branch branch, pid=\$pid.\"\n"
+clean=$clean"\t\tfi\n"
+clean=$clean"\tfi\n"
+clean=$clean"done\n"
+clean=$clean"\n"
+clean=$clean"rm .pp3d-*.sock */nohup.out stop.sh -f\n"
+clean=$clean"\n"
+clean=$clean"echo -e \"< Finish.\n\""
+echo -e $clean > stop.sh
+chmod u+x stop.sh
 
-while :
-do
+while : ; do
     sleep 0.1
     echo -e ".\c"
     if [ -f "PixelPet3D-core/nohup.out" ]; then
@@ -39,6 +61,8 @@ do
         fi
     fi
 done
+
+trap "./stop.sh; exit 2" 1 2 3 15
 
 echo -e ""
 tail -f PixelPet3D-core/nohup.out PixelPet3D-server/nohup.out
