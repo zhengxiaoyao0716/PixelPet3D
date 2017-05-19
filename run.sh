@@ -4,6 +4,10 @@ if [ -f "stop.sh" ]; then
     ./stop.sh
 fi
 
+echo -e "\n> Update 'master' branch:"
+git pull
+echo -e "< Already updated."
+
 branchs=("core" "browser" "server")
 for branch in ${branchs[@]}; do
     outdir=PixelPet3D-$branch
@@ -11,6 +15,10 @@ for branch in ${branchs[@]}; do
         echo -e "\n> Clone '$branch' branch:"
         git clone git@github.com:zhengxiaoyao0716/PixelPet3D.git -b $branch $outdir
         echo -e "< Cloned into '$outdir'."
+    else
+        echo -e "\n> Pull '$branch' branch:"
+        git pull
+        echo -e "< Pull into '$outdir'."
     fi
 done
 
@@ -24,6 +32,7 @@ echo -e "< Core-module runing, pid=$core_pid, logged to PixelPet3D-core/nohup.ou
 
 echo -e "\n> Config and start server from 'server' branch:"
 cd PixelPet3D-server
+pip install -r requirements.txt -q
 chmod u+x main.py
 nohup ./main.py -u &
 server_pid=$!
