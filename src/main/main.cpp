@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <map>
+#include <string>
 
 // ================================
 // #include "pp3d_g.h"
@@ -18,15 +20,30 @@ __PP3D_SERVER Server = PP3DServer;
 typedef PP3DHandler Handler;
 // ================================
 
-static void handler(IN char *recvBuf, OUT char *sendBuf)
+typedef std::map<std::string, Handler> Map;
+typedef Map::iterator Iter;
+static Map handlers;
+
+static void getInfoHandler(IN char *recvBuf, OUT char *sendBuf)
 {
-	printf("recv: %s\n", recvBuf);
 	InfoType Info = Config.Info;
 	sprintf(sendBuf, "%s: %s\nAuthor: %s\nAddress: %s", Info.Name, Info.Vers, Info.Auth, Info.Addr);
 }
 
+static void mainHandler(IN char *recvBuf, OUT char *sendBuf)
+{
+	printf("recv: %s\n", recvBuf);
+	Iter iter = handlers.find(recvBuf);
+	if (iter != handlers.end()){
+		(iter -> second)("", sendBuf);
+	}else{
+		printf("No handler for %s", recvBuf);
+	}
+}
+
 int main(int argc, char **argv)
 {
-	Server.Run(handler);
+	handlers["/info/get"] = getInfoHandler;
+	Server.Run(mainHandler);
 	return 0;
 }

@@ -4,7 +4,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-static char SERVER_ADDR[] = "./.pp3d-core.sock";
+static char SERVER_ADDR[] = "./../.pp3d-core.sock";
 static const int SOCKADDR_LEN = sizeof(struct sockaddr_un);
 
 static void server(PP3DHandler handler)
@@ -35,16 +35,20 @@ static void server(PP3DHandler handler)
 	printf("[ Listen %s ]\n", SERVER_ADDR);
 	while (true)
 	{
+		fflush(stdout);
+
 		struct sockaddr_un connectAddr;
 		socklen_t connectAddrLen = SOCKADDR_LEN;
-
 		char recvBuf[BUFSIZ] = {0}, sendBuf[BUFSIZ] = {0};
+
 		if (recvfrom(sockfd, recvBuf, BUFSIZ, 0, (sockaddr *)&connectAddr, &connectAddrLen) == -1)
 		{
 			perror("recv failed\n");
 			continue;
 		}
+
 		handler(recvBuf, sendBuf);
+
 		if (sendto(sockfd, sendBuf, BUFSIZ, 0, (sockaddr *)&connectAddr, connectAddrLen) == -1)
 		{
 			perror("send failed\n");
