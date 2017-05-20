@@ -1,0 +1,47 @@
+<!-- Pixel Pet 3D -->
+<!-- @author: zhengxiaoyao0716 -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="Keywords" content="" />
+    <meta name="Description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="x5-fullscreen" content="true">
+    <link rel="shortcut icon" href="http://os.zheng0716.com/static/image/favicon.ico" />
+    <title>Pixel Pet 3D</title>
+    <link href="./static/style/index.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="container"></div>
+    <style>
+        #palettePanel>* {
+            display: inline-block;
+            cursor: pointer;
+        }
+        #palettePanel>i {
+            margin: 6px;
+            width: 24px;
+            height: 24px;
+            box-shadow: 0 0 1px 1px #666;
+        }
+        #palettePanel>i.select {
+            box-shadow: 0 0 3px 3px #fff;
+        }
+    </style>
+    <div id="palettePanel"><span style="color: #fff; font-size: 21px;">+</span></div>
+
+    <!-- scripts -->
+    <div style="display: none;">
+        <script src="./static/script/three.min.js"></script>
+        <script src="./static/script/pp3d.js"></script>
+        <script src="./static/script/pp3d-editor.js"></script>
+    </div>
+</body>
+
+</html>

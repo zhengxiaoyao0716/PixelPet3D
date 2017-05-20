@@ -1,4 +1,12 @@
-{
+; (function () {
+    // @ts-ignore
+    var pp3d = window.pp3d;
+    var model = pp3d.initModel();
+    addEventListener("load", function () {
+        model.load.apply(model, pp3d.asset.model.test);
+        console.log(model.dump());
+    });
+
     if (location.host === "") {
         throw new Error("WebSocket was closed.");
     }
@@ -31,4 +39,4 @@
             handler ? handler(json["data"]) : console.warn("No handler for:", json);
         })(JSON.parse(e.data));
     });
-}
+})();
