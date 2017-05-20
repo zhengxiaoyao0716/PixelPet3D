@@ -12,9 +12,13 @@
 
 #include "pp3d.h"
 
-__PP3D_CONFIG Config = PP3DConfig;
-typedef PP3DInfoType InfoType;
+#define Config PP3DConfig
+#define SideLen PP3DSideLen
+#define InfoType PP3DInfoType
 
-__PP3D_MODEL Model = PP3DModel;
+#define Model PP3DModel
+
+#define Server PP3DServer
+#define Handler PP3DHandler
 
 #endif

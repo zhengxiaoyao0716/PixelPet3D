@@ -4,15 +4,13 @@
 #include <stdio.h>
 #include "public.h"
 
-static const int sideLen = 16;
+#define PP3DSideLen 16
 
 typedef struct
 {
-    const int SideLen;
-    const int Cube[sideLen][sideLen][sideLen];
+    const int Cube[PP3DSideLen][PP3DSideLen][PP3DSideLen];
     void (*Load)(IN FILE *stream);
     void (*Dump)(OUT FILE *stream);
-    void (*Projection)(OUT int rect[sideLen][sideLen]);
 } __PP3D_MODEL;
 extern __PP3D_MODEL PP3DModel;
 

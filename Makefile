@@ -70,8 +70,8 @@ endif
 
 # General variates.
 
-CC      =   g++
-SRCEXT  =   cpp
+CC      =   gcc
+SRCEXT  =   c
 FLAGS       =   -g -Wall -O3 -finput-charset=UTF-8 -fexec-charset=${CHARSET}
 CFLAGS      =   -I"${HEADDIR}"
 LIBPATHS    +=  -L"${LIBDIR}"

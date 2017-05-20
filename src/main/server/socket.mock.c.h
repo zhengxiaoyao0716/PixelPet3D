@@ -15,10 +15,11 @@ static void server(PP3DHandler handler)
     printf("[ Listen standard input ]\n");
 
     for (
-        char recvBuf[BUFSIZ], sendBuf[BUFSIZ] = {0};
+        char recvBuf[BUFSIZ], sendBuf[BUFSIZ];
         fflush(stdin), printf("\n请求："), gets(recvBuf);
         printf("===========【 响应 】===========\n%s\n================================\n", sendBuf))
     {
+        *sendBuf = '\0';
         handler(recvBuf, sendBuf);
     }
 

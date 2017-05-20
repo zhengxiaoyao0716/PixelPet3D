@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -33,7 +32,7 @@ static void server(PP3DHandler handler)
 	}
 
 	printf("[ Listen %s ]\n", SERVER_ADDR);
-	while (true)
+	while (1)
 	{
 		fflush(stdout);
 
@@ -41,7 +40,7 @@ static void server(PP3DHandler handler)
 		socklen_t connectAddrLen = SOCKADDR_LEN;
 		char recvBuf[BUFSIZ] = {0}, sendBuf[BUFSIZ] = {0};
 
-		if (recvfrom(sockfd, recvBuf, BUFSIZ, 0, (sockaddr *)&connectAddr, &connectAddrLen) == -1)
+		if (recvfrom(sockfd, recvBuf, BUFSIZ, 0, (struct sockaddr *)&connectAddr, &connectAddrLen) == -1)
 		{
 			perror("recv failed\n");
 			continue;
@@ -49,7 +48,7 @@ static void server(PP3DHandler handler)
 
 		handler(recvBuf, sendBuf);
 
-		if (sendto(sockfd, sendBuf, BUFSIZ, 0, (sockaddr *)&connectAddr, connectAddrLen) == -1)
+		if (sendto(sockfd, sendBuf, BUFSIZ, 0, (struct sockaddr *)&connectAddr, connectAddrLen) == -1)
 		{
 			perror("send failed\n");
 			continue;

@@ -7,7 +7,9 @@ typedef void (*PP3DHandler)(IN char *recvBuf, OUT char *sendBuf);
 
 typedef struct
 {
-    void (*Run)(PP3DHandler);
+    void (*Push)(const char *path, PP3DHandler handler);
+    void (*Run)();
+    void (*Free)();
 } __PP3D_SERVER;
 extern __PP3D_SERVER PP3DServer;
 
