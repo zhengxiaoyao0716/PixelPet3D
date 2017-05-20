@@ -5,7 +5,7 @@ if [ -f "stop.sh" ]; then
 fi
 
 echo -e "\n> Update 'master' branch:"
-git pull
+git pull origin master
 echo -e "< Already updated."
 
 branchs=("core" "browser" "server")
@@ -17,7 +17,9 @@ for branch in ${branchs[@]}; do
         echo -e "< Cloned into '$outdir'."
     else
         echo -e "\n> Pull '$branch' branch:"
-        git pull
+        cd $outdir
+        git pull origin $branch
+        cd ..
         echo -e "< Pull into '$outdir'."
     fi
 done
