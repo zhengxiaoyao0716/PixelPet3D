@@ -8,6 +8,7 @@ Connect with core module.
 
 import os
 import socket
+from concurrent.futures import ThreadPoolExecutor
 
 from tornado import gen
 from tornado.ioloop import IOLoop
@@ -44,9 +45,9 @@ class CoreConnector(object):
                         handlers.pop(path)
 
         @gen.coroutine
-        def invoke(path, message):
+        def invoke(path, _expect=''):
             """调用core模块"""
-            self.emit(path, message)
+            self.emit(path)
             q = Queue(maxsize=1)
 
             def _handler(message):
@@ -70,7 +71,7 @@ class CoreConnector(object):
         if 'AF_UNIX' in dir(socket):
             init_sock()
 
-            def emit(path, message):
+            def emit(path, message=''):
                 """向core发送消息"""
                 try:
                     self.sock.send(path + '?' + message)
@@ -80,21 +81,23 @@ class CoreConnector(object):
             self.emit = emit
             self.close = self.sock.close
 
+            thread_pool = ThreadPoolExecutor(4)
             @gen.coroutine
             def _recv_sock_message():
-                raise gen.Return(self.sock.recv(bufsize).strip('\0'))
+                result = yield thread_pool.submit(self.sock.recv, bufsize)
+                raise gen.Return(result.strip('\0'))
             recv_sock_message = _recv_sock_message
             self.invoke = invoke
         else:
-            self.emit = lambda path, message: None
+            self.emit = lambda path, message=None: None
             self.close = lambda: None
             q = Queue(maxsize=1)
             recv_sock_message = q.get
 
             @gen.coroutine
-            def _invoke(path, message):
-                q.put(path + '\n' + message)
-                message = yield invoke(path, message)
+            def _invoke(path, expect=''):
+                q.put(path + '\n' + expect)
+                message = yield invoke(path)
                 raise gen.Return(message)
             self.invoke = _invoke
 
