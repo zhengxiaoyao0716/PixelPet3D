@@ -24,6 +24,11 @@ for branch in ${branchs[@]}; do
     fi
 done
 
+if [ -f "/bin/mintty.exe" ]; then
+    exit 0
+fi
+
+
 echo -e "\n> Build and run core-module from 'core' branch:"
 cd PixelPet3D-core
 make build
@@ -63,7 +68,7 @@ clean=$clean"done\n"
 clean=$clean"\n"
 clean=$clean"rm .pp3d-*.sock */nohup.out stop.sh -f\n"
 clean=$clean"\n"
-clean=$clean"echo -e \"< Finish.\n\""
+clean=$clean"echo -e \"< Finish.\0134n\""
 echo -e $clean > stop.sh
 chmod u+x stop.sh
 
