@@ -17,6 +17,7 @@
             size: [600, 600],
             winIndex: null,
             clearColor: 0x000000,
+            lightDistance: 16,
         };
         var camera = {
             fov: 90,
@@ -44,12 +45,13 @@
             get clearColor() { return win.clearColor; }, set clearColor(v) { win.clearColor = v; },
             get fov() { return camera.fov; }, set fov(v) { camera.fov = v; },
             get distance() { return camera.distance; }, set distance(v) { camera.distance = v; },
+            get lightDistance() { return win.lightDistance; }, set lightDistance(v) { win.lightDistance = v; },
             /** @type {THREE.Scene} */
             get scene() { return notInitError(); },
             /** @param {number} index @return {THREE.Camera} */
             getCamera: function (index) { notInitError(); },
             /** @param {number} visibleLen */
-            resizeDistance: function (visibleLen) { notInitError(); },
+            adjustDistance: function (visibleLen) { notInitError(); },
             /** @param {boolean} adjustDistance @param {boolean} drawGrid */
             initModel: function (adjustDistance, drawGrid) { notInitError(); },
             get asset() { return { get model() { return model; }, }; }
@@ -69,12 +71,11 @@
         }
         function newCamare(index) {
             var camera = new THREE.PerspectiveCamera();
-            camera.lookAt(new THREE.Vector3((1 - index) % 2, 0, (2 - index) % 2));
             addEventListener("resize", function () { camera.updateProjectionMatrix(); });
             return camera;
         }
         function newSpotLight(index) {
-            var spotLight = new THREE.SpotLight(0xffffff, 1, 0, 0.3, 1);
+            var spotLight = new THREE.SpotLight(0xffffff, 1, 0, 0.3, 0.3, 1);
             scene.add(spotLight);
             return spotLight;
         }
@@ -100,10 +101,17 @@
         redefineSetter("winIndex", renderers, function (renderer, index) {
             renderer.domElement.setAttribute("data-pp3d-size", this == index ? "maxim" : this == null ? "medium" : "hidden");
         });
+        redefineSetter("winIndex", cameras, function (camera, index) {
+            camera.lookAt(new THREE.Vector3((1 - index) % 2, 0, (2 - index) % 2));
+            // TODO rotate
+            // if (this == null) {
+            //     camera.rotateZ((Math.PI / 2) * index + Math.PI * 3 / 4);
+            // }
+        });
         redefineSetter("clearColor", renderers, function (renderer, index) { renderer.setClearColor(this); });
         redefineSetter("fov", cameras, function (camera, index) { camera.fov = this; camera.updateProjectionMatrix(); });
         redefineSetter("distance", cameras, function (camera, index) { camera.position.set(((index - 1) % 2) * this, 0, ((index - 2) % 2) * this); });
-        redefineSetter("distance", spotLights, function (spotLight, index) {
+        redefineSetter("lightDistance", spotLights, function (spotLight, index) {
             spotLight.position.set(((index << 1) % 4 - 1) * this << 1, this, (((index << 1) - 3) % 2) * this << 1);
         });
 
@@ -131,7 +139,7 @@
     // public functions.
 
 
-    pp3d.resizeDistance = function (visibleLen) {
+    pp3d.adjustDistance = function (visibleLen) {
         pp3d.distance = (visibleLen / Math.tan(Math.PI * pp3d.fov / 360) + visibleLen) / 1.5;
     };
 
@@ -146,21 +154,23 @@
         pp3d.__defineSetter__("sideLen", function () { throw new Error("Can't change sideLen after model initialized."); });
 
         if (adjustDistance != false) {
-            pp3d.resizeDistance(sideLen);
+            pp3d.adjustDistance(sideLen);
         }
+        pp3d.lightDistance = sideLen * 0.8;
 
         // controller
         (function () {
             var verticalVector = new THREE.Vector3(1, 0, 0);
             var horizonVector = new THREE.Vector3(0, 1, 0);
             var parallelVector = new THREE.Vector3(0, 0, 1);
+            // TODO rotate camera instead of scene
             function vertical(angle) { scene.rotateOnAxis(verticalVector, angle); }
             function horizon(angle) { scene.rotateOnAxis(horizonVector, angle); }
             function parallel(angle) { scene.rotateOnAxis(parallelVector, angle); }
             function set(x, y, z) {
                 scene.rotation.set(x, y, z);
                 scene.updateMatrix();
-                pp3d.resizeDistance(pp3d.sideLen);
+                pp3d.adjustDistance(pp3d.sideLen);
             }
 
             var rotateSpeed = 0.1;

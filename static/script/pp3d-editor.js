@@ -25,7 +25,7 @@
     function onMouseMove(e) {
         cancelAnimationFrame(frameHandle);
         frameHandle = requestAnimationFrame(function () {
-            if (e) {
+            if (e instanceof MouseEvent) {
                 mouse.x = (e.clientX / Math.min(pp3d.container.clientWidth, pp3d.size[0])) * 2 - 1;
                 mouse.y = -(e.clientY / Math.min(pp3d.container.clientHeight, pp3d.size[1])) * 2 + 1;
             }
@@ -56,7 +56,6 @@
             }
         });
     }
-    pp3d.container.addEventListener('mousemove', onMouseMove, false);
 
     // palette
     var palette = (function () {
@@ -84,6 +83,9 @@
                 piece.addEventListener("contextmenu", function (e) {
                     e.stopPropagation();
                     e.preventDefault();
+                    if (!confirm("从调色板上移除？")) {
+                        return;
+                    }
                     piece.remove();
                     var index = colors.indexOf(color);
                     colors = colors.filter(function (_, i) { return i != index; });
@@ -99,26 +101,35 @@
 
     // controller
     (function () {
+        var autoMoveCursor;
+        pp3d.container.addEventListener('mousemove', function (e) {
+            onMouseMove(e);
+            autoMoveCursor = onMouseMove;
+        }, false);
         var controls = {
-            "38": function () { cursor.position.z--; },  // Up
-            "40": function () { cursor.position.z++; },  // Down
-            "37": function () { cursor.position.x--; },  // Left
-            "39": function () { cursor.position.x++; },  // Right
-            "33": function () { cursor.position.y++; },  // PageUp
-            "34": function () { cursor.position.y--; },  // PageDown
+            "38": function () { cursor.position.z--; autoMoveCursor = controls["38"]; },  // Up
+            "40": function () { cursor.position.z++; autoMoveCursor = controls["40"]; },  // Down
+            "37": function () { cursor.position.x--; autoMoveCursor = controls["37"]; },  // Left
+            "39": function () { cursor.position.x++; autoMoveCursor = controls["39"]; },  // Right
+            "33": function () { cursor.position.y++; autoMoveCursor = controls["33"]; },  // PageUp
+            "34": function () { cursor.position.y--; autoMoveCursor = controls["34"]; },  // PageDown
             // "16": function() { cursor.position.y++; },  // Shift
             // "17": function() { cursor.position.y--; },  // Control
             // @ts-ignore
-            "18": function (keyUp) { cursor.minusMode = !keyUp; },  // Alt
+            "18": function () { cursor.minusMode = true; },  // Alt
+        };
+        var keyupControls = {
+            // @ts-ignore
+            "18": function () { cursor.minusMode = false; },  // Alt
         };
         addEventListener("keydown", function (e) { controls[e.keyCode] && controls[e.keyCode](); });
-        addEventListener("keyup", function (e) { controls[e.keyCode] && controls[e.keyCode]("up"); });
+        addEventListener("keyup", function (e) { keyupControls[e.keyCode] && keyupControls[e.keyCode](); });
         pp3d.container.addEventListener("click", function (e) {
             e.stopPropagation();
             e.preventDefault();
             // @ts-ignore
             model.set(cursor.position, cursor.minusMode ? null : palette.current);
-            onMouseMove();
+            autoMoveCursor();
         });
         [pp3d.container, palettePanel].forEach(function (div) { div.addEventListener("mousewheel", function (e) { palette.currentIndex += e.deltaY / 100; }); });
         palettePanel.lastChild.addEventListener("click", function () {
