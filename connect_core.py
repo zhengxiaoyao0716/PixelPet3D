@@ -9,6 +9,10 @@ Connect with core module.
 import os
 import socket
 
+from tornado import gen
+from tornado.ioloop import IOLoop
+from tornado.queues import Queue
+
 
 class CoreConnector(object):
     """连接器"""
@@ -18,6 +22,39 @@ class CoreConnector(object):
                  core_sock='./../.pp3d-core.sock',
                  bufsize=2 ** 13):
         super(CoreConnector, self).__init__()
+
+        self.sock = None
+        """接收socket发来的消息"""
+        recv_sock_message = None
+        handlers = {}
+
+        def on(path, handler):
+            """注册监听控制器"""
+            handlers[path] = handler
+        self.on = on
+
+        @gen.coroutine
+        def listen():
+            """监听core发来的消息"""
+            while True:
+                item = yield recv_sock_message()
+                path, message = item.split('\n', 1)
+                if path in handlers:
+                    if handlers[path](message) is True:
+                        handlers.pop(path)
+
+        @gen.coroutine
+        def invoke(path, message):
+            """调用core模块"""
+            self.emit(path, message)
+            q = Queue(maxsize=1)
+
+            def _handler(message):
+                q.put(message)
+                return True
+            self.on(path, _handler)
+            message = yield q.get()
+            raise gen.Return(message)
 
         def init_sock():
             """初始化sock"""
@@ -33,24 +70,45 @@ class CoreConnector(object):
         if 'AF_UNIX' in dir(socket):
             init_sock()
 
-            def invoke_core(message, expect=None):
-                """调用C模块"""
+            def emit(path, message):
+                """向core发送消息"""
                 try:
-                    self.sock.send(message)
+                    self.sock.send(path + '?' + message)
                 except socket.error:
                     init_sock()
-                    return invoke_core(message, expect)
-                return self.sock.recv(bufsize).strip('\0')
-            self.invoke_core = invoke_core
-            self.close_connect = self.sock.close
+                    return emit(path, message)
+            self.emit = emit
+            self.close = self.sock.close
+
+            @gen.coroutine
+            def _recv_sock_message():
+                raise gen.Return(self.sock.recv(bufsize).strip('\0'))
+            recv_sock_message = _recv_sock_message
+            self.invoke = invoke
         else:
-            self.invoke_core = lambda message, expect=None: \
-                expect if expect is not None else message
-            self.close_connect = lambda: None
+            self.emit = lambda path, message: None
+            self.close = lambda: None
+            q = Queue(maxsize=1)
+            recv_sock_message = q.get
+
+            @gen.coroutine
+            def _invoke(path, message):
+                q.put(path + '\n' + message)
+                message = yield invoke(path, message)
+                raise gen.Return(message)
+            self.invoke = _invoke
+
+        IOLoop.current().spawn_callback(listen)
 
     def __del__(self):
-        self.close_connect()
+        self.close()
 
 if __name__ == '__main__':
     core_conn = CoreConnector()
-    print(core_conn.invoke_core("/info/get", "%s: %s\nAuthor: %s\nAddress: %s"))
+
+    @gen.coroutine
+    def test():
+        """测试socket"""
+        r = yield core_conn.invoke("/info/get", "%s: %s\nAuthor: %s\nAddress: %s")
+        print(r)
+    IOLoop.current().run_sync(test)

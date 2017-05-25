@@ -5,5 +5,5 @@
     "command": "start",
     "isShellCommand": true,
     "args": [".env/Scripts/python", "main.py"],
-    "showOutput": "always"
+    "showOutput": "never"
 }
