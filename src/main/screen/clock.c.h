@@ -19,17 +19,8 @@ static char *getTime(char *timeStr)
     return timeStr;
 }
 
-static void clockCenter(IN char *query, OUT char *sendBuf)
+static void clockActive(IN char *query, OUT char *sendBuf)
 {
-    if (focusMenu)
-    {
-        focusMenu = false;
-        char timeStr[20];
-        renderScreen("{\"type\": \"clock\", \"value\": \"%s\"}", getTime(timeStr));
-    }
-    else
-    {
-        focusMenu = true;
-        renderScreen(menuTemplate, CLOCK);
-    }
+    char timeStr[20];
+    renderScreen("{\"type\": \"clock\", \"value\": \"%s\"}", getTime(timeStr));
 }

@@ -10,14 +10,15 @@ typedef struct
     PP3DHandler Down;
     PP3DHandler Left;
     PP3DHandler Right;
-} PP3DScreenHandlers;
+} PP3DScreenController;
 
 /**
  * 浮在相机前的屏幕，16x16像素正交投影范围内
  */
 typedef struct
 {
-    PP3DScreenHandlers Handlers;
+    PP3DHandler Active;
+    PP3DScreenController Controller;
 } __PP3D_SCREEN;
 extern __PP3D_SCREEN PP3DScreen;
 

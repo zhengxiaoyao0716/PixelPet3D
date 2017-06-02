@@ -1,15 +1,6 @@
 const char HOME[] = "HOME";
 
-static void homeCenter(IN char *query, OUT char *sendBuf)
+static void homeActive(IN char *query, OUT char *sendBuf)
 {
-    if (focusMenu)
-    {
-        focusMenu = false;
-        renderScreen("{\"type\": \"pet\"}", "");
-    }
-    else
-    {
-        focusMenu = true;
-        renderScreen(menuTemplate, HOME);
-    }
+    renderScreen("{\"type\": \"pet\"}", "");
 }
