@@ -5,7 +5,7 @@ static void homeCenter(IN char *query, OUT char *sendBuf)
     if (focusMenu)
     {
         focusMenu = false;
-        renderScreen("/screen/render\n{\"type\": \"pet\"}", "");
+        renderScreen("{\"type\": \"pet\"}", "");
     }
     else
     {

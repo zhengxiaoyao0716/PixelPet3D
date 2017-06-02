@@ -25,7 +25,7 @@ static void clockCenter(IN char *query, OUT char *sendBuf)
     {
         focusMenu = false;
         char timeStr[20];
-        renderScreen("/screen/render\n{\"type\": \"clock\", \"value\": \"%s\"}", getTime(timeStr));
+        renderScreen("{\"type\": \"clock\", \"value\": \"%s\"}", getTime(timeStr));
     }
     else
     {

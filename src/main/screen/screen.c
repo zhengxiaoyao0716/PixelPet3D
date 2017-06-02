@@ -2,7 +2,7 @@
 
 #include "screen/screen.h"
 
-#define renderScreen(template, ...) sprintf(sendBuf, "/screen/render\n" template "", __VA_ARGS__)
+#define renderScreen(template, ...) sprintf(sendBuf, "/screen/render\n" template, __VA_ARGS__)
 #define menuTemplate "{\"type\": \"menu\", \"name\": \"%s\"}"
 
 typedef struct
@@ -43,7 +43,8 @@ static void left(IN char *query, OUT char *sendBuf)
         {
             cursor = menus + menusSize - 1;
         }
-        else {
+        else
+        {
             cursor--;
         }
         renderScreen(menuTemplate, (*cursor).name);
@@ -57,7 +58,8 @@ static void right(IN char *query, OUT char *sendBuf)
         {
             cursor = menus;
         }
-        else {
+        else
+        {
             cursor++;
         }
         renderScreen(menuTemplate, (*cursor).name);
