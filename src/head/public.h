@@ -10,6 +10,8 @@
 #define NULL 0
 #endif
 
+#ifndef __cplusplus
+
 #ifndef bool
 typedef int bool;
 #endif
@@ -18,4 +20,6 @@ typedef int bool;
 #endif
 #ifndef false
 #define false 0
+#endif
+
 #endif

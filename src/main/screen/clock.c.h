@@ -1,7 +1,5 @@
 #include <time.h>
 
-const char CLOCK[] = "CLOCK";
-
 static char *getTime(char *timeStr)
 {
     time_t timep;

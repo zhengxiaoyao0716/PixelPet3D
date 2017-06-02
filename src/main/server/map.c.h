@@ -27,6 +27,14 @@ static PP3DHandler findHandler(char *path)
     };
     return NULL;
 }
+static PP3DHandler printHandlers()
+{
+    Iter *iter, *tmp;
+    HASH_ITER(hh, handlers, iter, tmp)
+    {
+        printf("%s\n", (*iter).Path);
+    }
+}
 static void freeHandlers()
 {
     Iter *iter, *tmp;
