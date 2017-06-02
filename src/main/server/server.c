@@ -1,5 +1,6 @@
 #include "server/server.h"
 
+#include <stdio.h>
 #include <string.h>
 
 #include "map.c.h"
@@ -11,20 +12,23 @@
 
 static void serverHandler(IN char *recvBuf, OUT char *sendBuf)
 {
-    printf("recv: %s\n", recvBuf);
     char *query = strchr(recvBuf, '?');
     if (query)
     {
         *query = '\0';
         query++;
     }
+    printf("recv: %s\n", recvBuf);
     PP3DHandler handler = findHandler(recvBuf);
     if (handler)
     {
         handler(query, sendBuf);
+        if (*sendBuf == '\0') {
+            sprintf(sendBuf, "/warn\nNo response from '%s'.", recvBuf);
+        }
         return;
     }
-    printf("No handler for '%s'\n", recvBuf);
+    sprintf(sendBuf, "/error\nNo handler for '%s'.", recvBuf);
 }
 static void runServer()
 {
