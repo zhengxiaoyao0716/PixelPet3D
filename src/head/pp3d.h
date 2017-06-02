@@ -16,6 +16,7 @@ extern "C" {
 
 #include "config/config.h"
 #include "model/model.h"
+#include "screen/screen.h"
 #include "server/server.h"
 
 

@@ -18,6 +18,9 @@
 
 #define Model PP3DModel
 
+#define Screen PP3DScreen
+#define ScreenHandler PP3DScreenHandler
+
 #define Server PP3DServer
 #define Handler PP3DHandler
 

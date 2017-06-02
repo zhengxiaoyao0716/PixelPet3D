@@ -13,6 +13,14 @@ static void server(PP3DHandler handler)
 {
     system("cls") == 0 || system("clear");
     printf("[ Listen standard input ]\n");
+    printf("===========【 帮助 】===========\n"
+           "/info/get\n"
+           "/control/center\n"
+           "/control/up\n"
+           "/control/down\n"
+           "/control/left\n"
+           "/control/right\n"
+           "================================\n");
 
     for (
         char recvBuf[BUFSIZ], sendBuf[BUFSIZ];
