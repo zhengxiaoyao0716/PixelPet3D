@@ -4,6 +4,7 @@ body {
     color: #fff;
 }
 #container {
+    position: relative;
     line-height: 0;
 }
 #container>canvas[data-pp3d-size="maxim"] {
@@ -16,6 +17,21 @@ body {
 }
 #container>canvas[data-pp3d-size="hidden"] {
     display: none;
+}
+#container::after {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    left: 50%;
+    height: 50%;
+    margin-left: -15px;
+    margin-top: -15px;
+    z-index: 1;
+    font-size: 30px;
+    line-height: 30px;
+    text-align: center;
+    color: #fff;
+    content: "＋";
 }
 
 #controlPanel>table {

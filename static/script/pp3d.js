@@ -103,7 +103,6 @@
         });
         redefineSetter("winIndex", cameras, function (camera, index) {
             camera.lookAt(new THREE.Vector3((1 - index) % 2, 0, (2 - index) % 2));
-            // TODO rotate
             if (this == null) {
                 camera.rotateZ((Math.PI / 2) * index + Math.PI * 3 / 4);
             }
@@ -163,20 +162,31 @@
             var verticalVector = new THREE.Vector3(1, 0, 0);
             var horizonVector = new THREE.Vector3(0, 1, 0);
             var parallelVector = new THREE.Vector3(0, 0, 1);
-            // TODO rotate camera instead of scene
             function vertical(angle) { scene.rotateOnAxis(verticalVector, angle); }
             function horizon(angle) { scene.rotateOnAxis(horizonVector, angle); }
             function parallel(angle) { scene.rotateOnAxis(parallelVector, angle); }
-            function set(x, y, z) {
-                scene.rotation.set(x, y, z);
+            var gravityZ = -9.8;
+            function setRotation(x, y, z) {
+                scene.rotation.set(gravityZ > 0 ? Math.PI : 0, y, z);
                 scene.updateMatrix();
                 pp3d.adjustDistance(pp3d.sideLen);
             }
+            addEventListener('devicemotion', function (e) {
+                if (e.accelerationIncludingGravity) {
+                    // var x = e.accelerationIncludingGravity.x;
+                    // var y = e.accelerationIncludingGravity.y;
+                    var z = e.accelerationIncludingGravity.z;
+                    if (z != null) {
+                        gravityZ = z;
+                        setRotation(0, 0, 0);
+                    }
+                }
+            });
 
             var rotateSpeed = 0.1;
             var controls = {
                 /** View control */
-                "83": function () { set(0, 0, 0); }, // S
+                "83": function () { setRotation(0, 0, 0); }, // S
                 "87": function () { vertical(-rotateSpeed); }, // W
                 "88": function () { vertical(+rotateSpeed); }, // X
                 "65": function () { horizon(-rotateSpeed); },  // A
@@ -190,13 +200,6 @@
                 event.stopPropagation();
                 // console.log(event.keyCode);
                 controls[event.keyCode] && controls[event.keyCode]();
-            });
-            addEventListener('devicemotion', function (e) {
-                if (e.accelerationIncludingGravity) {
-                    var x = e.accelerationIncludingGravity.x;
-                    var y = e.accelerationIncludingGravity.y;
-                    var z = e.accelerationIncludingGravity.z;
-                }
             });
         })();
 

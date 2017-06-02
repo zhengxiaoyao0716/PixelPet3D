@@ -27,10 +27,10 @@
     var ws = new WebSocket("ws" + location.origin.slice(4) + "/ws");
 
     ws.addEventListener("open", function (e) {
-        var interval = setInterval(function () { ws.send("Hello"); console.log("U said 'ping'."); }, 3000);
-        ws.addEventListener("close", function (e) {
-            clearInterval(interval);
-        });
+        // var interval = setInterval(function () { ws.send("Hello"); console.log("U said 'ping'."); }, 3000);
+        // ws.addEventListener("close", function (e) {
+        //     clearInterval(interval);
+        // });
     });
     ws.addEventListener("message", function (e) {
         return (function (json) {
@@ -42,7 +42,7 @@
     addEventListener("load", function () {
         var controlPanel = document.querySelector("#controlPanel");
         ["center", "up", "down", "left", "right"].forEach(function (button) {
-            controlPanel.querySelector(button).addEventListener("click", function (e) {
+            controlPanel.querySelector("#" + button).addEventListener("click", function (e) {
                 ws.send("/control/" + button);
             });
         });
