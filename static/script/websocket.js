@@ -2,10 +2,6 @@
     // @ts-ignore
     var pp3d = window.pp3d;
     var model = pp3d.initModel();
-    addEventListener("load", function () {
-        model.load(pp3d.asset.model.test[0]);
-        console.log(model.dump());
-    });
 
     var handlers = {
         "/info/get": function (data) {
@@ -17,10 +13,11 @@
                 p.textContent = line;
             });
         },
-        "/screen/render": function (data) {
+        "/screen/render": function (str) {
+            var data = JSON.parse(str);
             var handler = ({
-                "menu": function (data) { model.load(pp3d.asset.model.menu[data.name]); },
-                "clock": function (data) {
+                "menu": function () { model.load(pp3d.asset.model.menu[data.name]); },
+                "clock": function () {
                     model.clean();
                     Array.prototype.forEach.call(data.value.slice(0, 4), function (v, i) {
                         model.load(pp3d.asset.model.number[v][0], [pp3d.colors[i % 2]], [i << 2, 9, 11], 'xyz', true);
@@ -32,9 +29,9 @@
                         model.load(pp3d.asset.model.number[v][0], [pp3d.colors[i % 2 + 4]], [(i << 2) - 1, 0, -1], 'xzY', true);
                     });
                 },
-                "pet": function (data) { model.load(pp3d.asset.model.test[0]); },
+                "pet": function () { model.load(pp3d.asset.model.test[0]); },
             })[data.type];
-            handler && handler(data);
+            handler && handler();
         },
     };
     if (location.host === "") {
@@ -48,7 +45,7 @@
         ];
         function runTimeout() {
             setTimeout(function () {
-                handlers["/screen/render"](stacks.pop());
+                handlers["/screen/render"](JSON.stringify(stacks.pop()));
                 stacks.length && runTimeout();
             }, 1000);
         }
@@ -68,7 +65,7 @@
     ws.addEventListener("message", function (e) {
         return (function (json) {
             var handler = handlers[json["event"]];
-            handler ? handler(json["data"]) : console.warn("No handler for:", json);
+            handler ? handler(json["data"]) : json.event.endsWith('/emit') || console.warn("No handler for:", json);
         })(JSON.parse(e.data));
     });
 
