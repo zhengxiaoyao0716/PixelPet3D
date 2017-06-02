@@ -39,9 +39,9 @@ class CoreConnector(object):
             """监听core发来的消息"""
             while True:
                 item = yield recv_sock_message()
-                path, message = item.split('\n', 1)
+                path, data = item.split('\n', 1)
                 if path in handlers:
-                    if handlers[path](message) is True:
+                    if handlers[path](data) is True:
                         handlers.pop(path)
 
         @gen.coroutine
@@ -50,12 +50,12 @@ class CoreConnector(object):
             self.emit(path)
             q = Queue(maxsize=1)
 
-            def _handler(message):
-                q.put(message)
+            def _handler(data):
+                q.put(data)
                 return True
             self.on(path, _handler)
-            message = yield q.get()
-            raise gen.Return(message)
+            data = yield q.get()
+            raise gen.Return(data)
 
         def init_sock():
             """初始化sock"""
@@ -82,6 +82,7 @@ class CoreConnector(object):
             self.close = self.sock.close
 
             thread_pool = ThreadPoolExecutor(4)
+
             @gen.coroutine
             def _recv_sock_message():
                 result = yield thread_pool.submit(self.sock.recv, bufsize)

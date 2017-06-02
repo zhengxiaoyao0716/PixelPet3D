@@ -26,14 +26,14 @@ class IndexHandler(tornado.web.RequestHandler):
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     """WebSocket"""
 
-    def __init__(self, *args, **kwargs):
-        super(WebSocketHandler, self).__init__(*args, **kwargs)
-
     def check_origin(self, origin):
         return True
 
-    def open(self):
-        """open"""
+    def open(self, *args, **kwargs):
+        for path in ['/screen/render']:
+            core_conn.on(path,
+                         lambda data: self.write_message({'event': path, 'data': data}))
+
         @gen.coroutine
         def get_info():
             """获取信息"""
@@ -45,12 +45,28 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         IOLoop.current().spawn_callback(get_info)
 
     def on_message(self, message):
-        self.write_message({
-            "event": "text",
-            "data": {
-                "message": "pong",
-            }
-        })
+        path, message = message.split('?', 1) \
+            if '?' in message else [message, '']
+        if path.startswith("invoke://"):
+            path = path[9:]
+
+            @gen.coroutine
+            def invoke():
+                """获取信息"""
+                data = yield core_conn.invoke(path, message)
+                self.write_message({
+                    "event": path,
+                    "data": data
+                })
+            IOLoop.current().spawn_callback(invoke)
+        else:
+            if path.startswith('emit://'):
+                path = path[7:]
+            core_conn.emit(path, message)
+            self.write_message({
+                "event": path + '/emit',
+                "data": 'fin'
+            })
 
     def on_close(self):
         # TODO clean
