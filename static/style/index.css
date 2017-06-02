@@ -23,7 +23,7 @@ body {
     width: 30px;
     height: 30px;
     left: 50%;
-    height: 50%;
+    top: 50%;
     margin-left: -15px;
     margin-top: -15px;
     z-index: 1;

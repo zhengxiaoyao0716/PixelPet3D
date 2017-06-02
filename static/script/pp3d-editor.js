@@ -142,10 +142,10 @@
         });
     })();
 
+    editor.load = model.load;
     editor.save = function () {
         var data = model.dump();
-        var str = "pp3d.asset.model.test = (\n    '" + data[0] + "\\n" + data[1] + "'\n).split('\\n').map(function (s) { return s.split(',').map(function (v) { return v == '' ? undefined : parseInt(v); }); });";
-        console.log(str);
+        var str = "\n'\\n" + data[0] + "\\n" + data[1] + "',\n";
         return str;
     };
 

@@ -54,7 +54,26 @@
             adjustDistance: function (visibleLen) { notInitError(); },
             /** @param {boolean} adjustDistance @param {boolean} drawGrid */
             initModel: function (adjustDistance, drawGrid) { notInitError(); },
-            get asset() { return { get model() { return model; }, }; }
+            get asset() {
+                return {
+                    get model() { return model; },
+                    load: function (name, strs, parent) {
+                        if (parent == null) {
+                            parent = model[name] = [];
+                        }
+                        strs.forEach(function (str) {
+                            var seps = str.split('\n');
+                            var key = seps[0];
+                            var value = seps.slice(1).map(function (s) { return s.split(',').map(function (v) { return v == '' ? undefined : parseInt(v); }); });
+                            if (key == '') {
+                                parent.push(value);
+                            } else {
+                                parent[key] = value;
+                            }
+                        });
+                    },
+                };
+            }
         };
     })();
 
@@ -275,14 +294,24 @@
 
         /**
          * @param onEach {function (THREE.Mesh, number): void}
+         * @param {number[]} [offset=[0, 0, 0]]
+         * @param {string} [rotate='xyz']
          */
-        function iterMeshs(onEach) {
+        function iterMeshs(onEach, offset, rotate) {
+            var offsets = Array.prototype.map.call(rotate || 'xyz', function (v) {
+                return ({
+                    'x': Math.pow(sideLen, 2), 'y': Math.pow(sideLen, 1), 'z': Math.pow(sideLen, 0),
+                    'X': -Math.pow(sideLen, 2), 'Y': -Math.pow(sideLen, 1), 'Z': -Math.pow(sideLen, 0),
+                })[v];
+            });
+            var i = offset == null ? 0 : -offsets[0] * offset[0] + -offsets[1] * offset[1] + -offsets[2] * offset[2];
             for (var x = 0; x < sideLen; x++) {
-                var ix = x * sideLen * sideLen;
+                var ix = x * offsets[0];
                 for (var y = 0; y < sideLen; y++) {
-                    var iy = ix + y * sideLen;
+                    var iy = y * offsets[1] + ix;
                     for (var z = 0; z < sideLen; z++) {
-                        onEach(meshes[x][y][z], iy + z);
+                        var iz = z * offsets[2] + iy;
+                        onEach(meshes[x][y][z], i + iz);
                     }
                 }
             }
@@ -320,7 +349,11 @@
                     meshesGroup.remove(box);
                 }
             },
-            load: function (pixs, colors) {
+            load: function (pixs, colors, offset, rotate, keep) {
+                if (arguments.length == 1) {
+                    colors = pixs[1];
+                    pixs = pixs[0];
+                }
                 iterMeshs(function (mesh, index) {
                     if (pixs[index] != null) {
                         /** @type {THREE.MeshBasicMaterial} */
@@ -328,9 +361,14 @@
                         var material = mesh.material;
                         material.color.setHex(colors[pixs[index]]);
                         mesh.material.visible = true;
-                    } else {
+                    } else if (!keep) {
                         mesh.material.visible = false;
                     }
+                }, offset, rotate == null ? "xyz" : rotate);
+            },
+            clean: function () {
+                iterMeshs(function (mesh) {
+                    mesh.material.visible = false;
                 });
             },
             dump: function () {
