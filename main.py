@@ -30,9 +30,15 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self, *args, **kwargs):
-        for path in ['/screen/render']:
-            core_conn.on(path,
-                         lambda data: self.write_message({'event': path, 'data': data}))
+        for path in [
+            '/screen/render',
+            '/warn',
+            '/error',
+        ]:
+            (lambda path:
+                core_conn.on(path,
+                             lambda data: self.write_message({'event': path, 'data': data}))
+             )(path)
 
         @gen.coroutine
         def get_info():
