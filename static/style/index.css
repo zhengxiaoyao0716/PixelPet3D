@@ -17,3 +17,11 @@ body {
 #container>canvas[data-pp3d-size="hidden"] {
     display: none;
 }
+
+#controlPanel>table {
+    margin: auto;
+    font-size: 30px;
+}
+#controlPanel>table td[id] {
+    cursor: pointer;
+}

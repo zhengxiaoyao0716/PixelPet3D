@@ -21,8 +21,7 @@
                 p.textContent = line;
             });
         },
-        "text": function () { console.log("Pet said 'pong'"); },
-        "action": console.log,
+        "/screen/render": console.log,
     };
 
     var ws = new WebSocket("ws" + location.origin.slice(4) + "/ws");
@@ -38,5 +37,14 @@
             var handler = handlers[json["event"]];
             handler ? handler(json["data"]) : console.warn("No handler for:", json);
         })(JSON.parse(e.data));
+    });
+
+    addEventListener("load", function () {
+        var controlPanel = document.querySelector("#controlPanel");
+        ["center", "up", "down", "left", "right"].forEach(function (button) {
+            controlPanel.querySelector(button).addEventListener("click", function (e) {
+                ws.send("/control/" + button);
+            });
+        });
     });
 })();

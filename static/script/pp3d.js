@@ -104,9 +104,9 @@
         redefineSetter("winIndex", cameras, function (camera, index) {
             camera.lookAt(new THREE.Vector3((1 - index) % 2, 0, (2 - index) % 2));
             // TODO rotate
-            // if (this == null) {
-            //     camera.rotateZ((Math.PI / 2) * index + Math.PI * 3 / 4);
-            // }
+            if (this == null) {
+                camera.rotateZ((Math.PI / 2) * index + Math.PI * 3 / 4);
+            }
         });
         redefineSetter("clearColor", renderers, function (renderer, index) { renderer.setClearColor(this); });
         redefineSetter("fov", cameras, function (camera, index) { camera.fov = this; camera.updateProjectionMatrix(); });
