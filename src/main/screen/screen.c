@@ -21,10 +21,12 @@ static bool focusMenu = false;
 
 #include "home.c.h"
 #include "clock.c.h"
+#include "game.c.h"
 
 static MenuItem menus[] = {
     {"HOME", homeActive, {}},
     {"CLOCK", clockActive, {}},
+    {"GAME", gameActive, {NULL, gameUp, gameDown, gameLeft, gameRight}},
 };
 static int menusSize = sizeof(menus) / sizeof(MenuItem);
 static MenuItem *cursor = menus;
@@ -34,6 +36,7 @@ static void active(IN char *query, OUT char *sendBuf)
     if (focusMenu)
     {
         renderScreen(menuTemplate, (*cursor).name);
+        return;
     }
     _INTERCEPT_((*cursor).active)
 }
@@ -55,6 +58,7 @@ static void up(IN char *query, OUT char *sendBuf)
     {
         cursor = menus;
         renderScreen(menuTemplate, (*cursor).name);
+        return;
     }
     _INTERCEPT_((*cursor).controller.Up)
 }
@@ -64,6 +68,7 @@ static void down(IN char *query, OUT char *sendBuf)
     {
         cursor = menus + menusSize - 1;
         renderScreen(menuTemplate, (*cursor).name);
+        return;
     }
     _INTERCEPT_((*cursor).controller.Down)
 }
@@ -80,6 +85,7 @@ static void left(IN char *query, OUT char *sendBuf)
             cursor--;
         }
         renderScreen(menuTemplate, (*cursor).name);
+        return;
     }
     _INTERCEPT_((*cursor).controller.Left)
 }
@@ -96,6 +102,7 @@ static void right(IN char *query, OUT char *sendBuf)
             cursor++;
         }
         renderScreen(menuTemplate, (*cursor).name);
+        return;
     }
     _INTERCEPT_((*cursor).controller.Right)
 }
