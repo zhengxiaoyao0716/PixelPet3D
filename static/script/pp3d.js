@@ -57,20 +57,20 @@
             get asset() {
                 return {
                     get model() { return model; },
-                    load: function (name, strs, parent) {
-                        if (parent == null) {
-                            parent = model[name] = [];
-                        }
-                        strs.forEach(function (str) {
+                    load: function (name, data, parent) {
+                        parent = parent || model;
+                        var child = parent[name] = [];
+                        data.forEach(function (str) {
                             var seps = str.split('\n');
                             var key = seps[0];
                             var value = seps.slice(1).map(function (s) { return s.split(',').map(function (v) { return v == '' ? undefined : parseInt(v); }); });
                             if (key == '') {
-                                parent.push(value);
+                                child.push(value);
                             } else {
-                                parent[key] = value;
+                                child[key] = value;
                             }
                         });
+                        return child;
                     },
                 };
             }

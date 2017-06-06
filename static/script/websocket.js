@@ -17,6 +17,10 @@
             var data = JSON.parse(str);
             var handler = ({
                 "menu": function () { model.load(pp3d.asset.model.menu[data.name]); },
+                "pet": function () {
+                    // TODO 动态
+                    model.load(pp3d.asset.model.pet[data.name]);
+                },
                 "clock": function () {
                     model.clean();
                     Array.prototype.forEach.call(data.value.slice(0, 4), function (v, i) {
@@ -29,7 +33,6 @@
                         model.load(pp3d.asset.model.number[v][0], [pp3d.colors[i % 2 + 4]], [(i << 2) - 1, 0, -1], 'xzY', true);
                     });
                 },
-                "pet": function () { model.load(pp3d.asset.model.test[0]); },
             })[data.type];
             handler && handler();
         },
@@ -38,7 +41,7 @@
         handlers["/info/get"]("%s: %s\nAuthor: %s\nAddress: %s");
 
         var stacks = [
-            { type: "pet" },
+            { type: "pet", name: "PiPi" },
             { type: "clock", value: "9876-05-04 03:21:" },
             { type: "menu", name: "CLOCK" },
             { type: "menu", name: "HOME" },

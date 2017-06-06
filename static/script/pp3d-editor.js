@@ -117,6 +117,11 @@
             // "17": function() { cursor.position.y--; },  // Control
             // @ts-ignore
             "18": function () { cursor.minusMode = true; },  // Alt
+            "13": function () {  // Space
+                // @ts-ignore
+                model.set(cursor.position, cursor.minusMode ? null : palette.current);
+                autoMoveCursor();
+            },
         };
         var keyupControls = {
             // @ts-ignore
@@ -127,9 +132,7 @@
         pp3d.container.addEventListener("click", function (e) {
             e.stopPropagation();
             e.preventDefault();
-            // @ts-ignore
-            model.set(cursor.position, cursor.minusMode ? null : palette.current);
-            autoMoveCursor();
+            controls["13"]();
         });
         [pp3d.container, palettePanel].forEach(function (div) { div.addEventListener("mousewheel", function (e) { palette.currentIndex += e.deltaY / 100; }); });
         palettePanel.lastChild.addEventListener("click", function () {
