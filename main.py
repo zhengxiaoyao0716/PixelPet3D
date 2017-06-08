@@ -39,7 +39,6 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 core_conn.on(path,
                              lambda data: self.write_message({'event': path, 'data': data}))
              )(path)
-        core_conn.emit('/screen/active')
 
         @gen.coroutine
         def get_info():
@@ -49,6 +48,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 "event": "/info/get",
                 "data": data
             })
+            core_conn.emit('/screen/active')
         IOLoop.current().spawn_callback(get_info)
 
     def on_message(self, message):
