@@ -15,6 +15,14 @@ body {
     display: inline-block;
     max-width: 50%;
 }
+#container>canvas[data-pp3d-size="medium"]:nth-child(1),
+#container>canvas[data-pp3d-size="medium"]:nth-child(4) {
+    transform: scaleX(-1) rotate(90deg);
+}
+#container>canvas[data-pp3d-size="medium"]:nth-child(2),
+#container>canvas[data-pp3d-size="medium"]:nth-child(3) {
+    transform: scaleX(-1) rotate(-90deg);
+}
 #container>canvas[data-pp3d-size="hidden"] {
     display: none;
 }

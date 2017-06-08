@@ -1,6 +1,7 @@
 ; (function () {
     // @ts-ignore
     var pp3d = window.pp3d;
+    addEventListener("load", function () { pp3d.winIndex = innerWidth > innerHeight ? 2 : null; });
     var model = pp3d.initModel();
     var pet;
 
@@ -8,6 +9,7 @@
         "/info/get": function (data) {
             // expect: %s: %s\nAuthor: %s\nAddress: %s
             var infoPanel = document.querySelector("#infoPanel");
+            infoPanel.innerHTML = "";
             var infos = data.split("\n");
             var data = JSON.parse(infos.pop());
             pet = pp3d.asset.model.pet[data.pet];
@@ -92,7 +94,7 @@
         })(),
     };
     if (location.host === "") {
-        handlers["/info/get"]("%s: %s\nAuthor: %s\nAddress: %s");
+        handlers["/info/get"]('%s: %s\nAuthor: %s\nAddress: %s\n{"pet": "PiPi"}');
 
         var stacks = [
             // pet
@@ -109,6 +111,7 @@
             // clock
             { type: "clock", value: "9876-05-04 03:21:" },
             // menu
+            { type: "menu", name: "GAME" },
             { type: "menu", name: "CLOCK" },
             { type: "menu", name: "HOME" },
             // pet
