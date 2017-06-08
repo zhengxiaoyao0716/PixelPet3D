@@ -43,7 +43,7 @@ static void gameActive(IN char *query, OUT char *sendBuf)
 {
     actionSize = 4;
     makeActions();
-    renderScreen("{\"type\": \"game\", \"name\": \"%s\", \"value\": \"%s\"}", "begin", actions);
+    renderScreen("{\"type\": \"game\", \"name\": \"%s\", \"value\": \"%s\"}", "start", actions);
 }
 
 static void gameAction(char action, IN char *query, OUT char *sendBuf)
@@ -59,7 +59,7 @@ static void gameAction(char action, IN char *query, OUT char *sendBuf)
         }
         else
         {
-            renderScreen("{\"type\": \"game\", \"name\": \"%s\", \"value\": \"%d\"}", "pass", actionIndex);
+            renderScreen("{\"type\": \"game\", \"name\": \"%s\", \"value\": \%c\}", "pass", action);
         }
     }
     else
