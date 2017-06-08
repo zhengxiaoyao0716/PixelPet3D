@@ -146,9 +146,9 @@
     })();
 
     editor.load = model.load;
-    editor.save = function () {
+    editor.save = function (name) {
         var data = model.dump();
-        var str = "\n'\\n" + data[0] + "\\n" + data[1] + "',\n";
+        var str = "\n'" + (name || "") + "\\n" + data[0] + "\\n" + data[1] + "',\n";
         return str;
     };
 

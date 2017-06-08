@@ -59,19 +59,34 @@
                     get model() { return model; },
                     load: function (name, data, parent) {
                         parent = parent || model;
-                        var child = parent[name] = [];
-                        data.forEach(function (str) {
-                            var seps = str.split('\n');
-                            var key = seps[0];
-                            var value = seps.slice(1).map(function (s) { return s.split(',').map(function (v) { return v == '' ? undefined : parseInt(v); }); });
-                            if (key == '') {
-                                child.push(value);
-                            } else {
-                                child[key] = value;
-                            }
-                        });
-                        return child;
+                        if (data instanceof Array) {
+                            parent[name] = [];
+                            data.forEach(function (str) {
+                                var seps = str.split('\n');
+                                var key = seps[0];
+                                var value = seps.slice(1).map(function (s) { return s.split(',').map(function (v) { return v == '' ? undefined : parseInt(v); }); });
+                                if (key == '') {
+                                    parent[name].push(value);
+                                } else {
+                                    parent[name][key] = value;
+                                }
+                            });
+                        } else {
+                            parent[name] = data;
+                        }
+                        return parent[name];
                     },
+                    action: function (frames, defaultFreq) {
+                        return function (model, frame, freq) {
+                            freq = freq || defaultFreq || 10;
+                            if (frame % freq != 0) {
+                                return false;
+                            }
+                            var index = frame / freq % frames.length;
+                            model.load.apply(model, frames[index]);
+                            return index == frames.length - 1;
+                        };
+                    }
                 };
             }
         };
@@ -298,13 +313,31 @@
          * @param {string} [rotate='xyz']
          */
         function iterMeshs(onEach, offset, rotate) {
-            var offsets = Array.prototype.map.call(rotate || 'xyz', function (v) {
+            function fix(i) { fix.offset[i] = -fix.offset[i] - 1; }
+            fix.offset = [0, 0, 0];
+            fix.offset[-1] = 0;
+            fix.sort = [0, 1, 2];
+            var offsets = Array.prototype.map.call(rotate || 'xyz', function (v, i) {
                 return ({
-                    'x': Math.pow(sideLen, 2), 'y': Math.pow(sideLen, 1), 'z': Math.pow(sideLen, 0),
+                    // 'x': Math.pow(sideLen, 2), 'y': Math.pow(sideLen, 1), 'z': Math.pow(sideLen, 0),
                     'X': -Math.pow(sideLen, 2), 'Y': -Math.pow(sideLen, 1), 'Z': -Math.pow(sideLen, 0),
+                    get x() { fix.sort[0] = i; return Math.pow(sideLen, 2); },
+                    get y() { fix.sort[1] = i; return Math.pow(sideLen, 1); },
+                    get z() { fix.sort[2] = i; return Math.pow(sideLen, 0); },
+                    get A() { fix.sort[0] = i; fix(-1); fix(0); return -Math.pow(sideLen, 2); },
+                    get B() { fix.sort[1] = i; fix(0); fix(1); return -Math.pow(sideLen, 1); },
+                    get C() { fix.sort[2] = i; fix(1); fix(2); return -Math.pow(sideLen, 0); },
                 })[v];
             });
-            var i = offset == null ? 0 : -offsets[0] * offset[0] + -offsets[1] * offset[1] + -offsets[2] * offset[2];
+            fix.offset[0] = fix.offset[-1] ? fix.offset[0] + 16 : fix.offset[0];
+            var i = offset == null ? 0 :
+                (
+                    -offsets[0] * (offset[0] + fix.offset[fix.sort[0]])
+                ) + (
+                    -offsets[1] * (offset[1] + fix.offset[fix.sort[1]])
+                ) + (
+                    -offsets[2] * (offset[2] + fix.offset[fix.sort[2]])
+                );
             for (var x = 0; x < sideLen; x++) {
                 var ix = x * offsets[0];
                 for (var y = 0; y < sideLen; y++) {
@@ -349,10 +382,18 @@
                     meshesGroup.remove(box);
                 }
             },
-            load: function (pixs, colors, offset, rotate, keep) {
+            load: function (pixs, colors, offset, rotate, keep, advance) {
                 if (arguments.length == 1) {
                     colors = pixs[1];
                     pixs = pixs[0];
+                }
+                if (advance) {
+                    if (advance.fixed) {
+                        meshesGroup.position.set.apply(meshesGroup.position, offset);
+                        offset = [0, 0, 0];
+                    }
+                } else {
+                    meshesGroup.position.set(0, 0, 0);
                 }
                 iterMeshs(function (mesh, index) {
                     if (pixs[index] != null) {

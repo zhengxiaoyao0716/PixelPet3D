@@ -2,6 +2,7 @@
     // @ts-ignore
     var pp3d = window.pp3d;
     var model = pp3d.initModel();
+    var pet;
 
     var handlers = {
         "/info/get": function (data) {
@@ -13,16 +14,19 @@
                 p.textContent = line;
             });
         },
-        "/screen/render": function (str) {
-            var data = JSON.parse(str);
-            var handler = ({
-                "menu": function () { model.load(pp3d.asset.model.menu[data.name]); },
-                "pet": function () {
-                    // TODO 动态
-                    model.load(pp3d.asset.model.pet[data.name]);
+        "/screen/render": (function () {
+            var animationFrame;
+            var handlers = {
+                "menu": function (data) { model.load(pp3d.asset.model.menu[data.name]); },
+                "pet": function (data) {
+                    pet = pp3d.asset.model.pet[data.name];
+                    var frame = 0;
+                    (function animate() {
+                        pet.action.random(model, frame++);
+                        animationFrame = requestAnimationFrame(animate);
+                    })();
                 },
-                "clock": function () {
-                    model.clean();
+                "clock": function (data) {
                     Array.prototype.forEach.call(data.value.slice(0, 4), function (v, i) {
                         model.load(pp3d.asset.model.number[v][0], [pp3d.colors[i % 2]], [i << 2, 9, 11], 'xyz', true);
                     });
@@ -33,18 +37,79 @@
                         model.load(pp3d.asset.model.number[v][0], [pp3d.colors[i % 2 + 4]], [(i << 2) - 1, 0, -1], 'xzY', true);
                     });
                 },
-            })[data.type];
-            handler && handler();
-        },
+                "game": function (data) {
+                    var value = data.value;
+                    var actions = {
+                        "U": pet.action.jump,
+                        "D": pet.action.squat,
+                        "L": pet.action.waggleLeft,
+                        "R": pet.action.waggleRight,
+                    };
+                    var title = pp3d.asset.model.game[data.name];
+                    var colors = title[1];
+
+                    var frame = 0;
+                    (function animate() {
+                        if (title) {
+                            if (frame % 10 == 0) {
+                                var index = frame / 10;
+                                if (index <= 6) {
+                                    model.load(
+                                        title[0],
+                                        colors.slice(index % colors.length).concat(colors.slice(0, index % colors.length)),
+                                        [0, 5, 7 + index % 2]
+                                    );
+                                } else if (index == 9) {
+                                    title = null;
+                                    frame = -1;
+                                }
+                            }
+                        } else if (actions[value[0]](model, frame)) {
+                            value = value.slice(1);
+                            frame = -1;
+                            if (value[0] == null) {
+                                model.load(pet.stand);
+                                return;
+                            }
+                        }
+                        frame++;
+                        animationFrame = requestAnimationFrame(animate);
+                    })();
+                },
+            };
+            return function (str) {
+                var data = JSON.parse(str);
+                var handler = (handlers)[data.type];
+                if (handler) {
+                    cancelAnimationFrame(animationFrame);
+                    model.clean();
+                    handler(data);
+                }
+            };
+        })(),
     };
     if (location.host === "") {
         handlers["/info/get"]("%s: %s\nAuthor: %s\nAddress: %s");
 
         var stacks = [
+            // pet
             { type: "pet", name: "PiPi" },
+            // game
+            { type: "none" }, { type: "none" },
+            { type: "game", name: "lose", value: "DULR" },
+            { type: "none" }, { type: "none" },
+            { type: "game", name: "win", value: "RLUD" },
+            { type: "none" }, { type: "none" },
+            { type: "game", name: "pass", value: "L" },
+            { type: "none" }, { type: "none" },
+            { type: "game", name: "start", value: "UDLR" },
+            // clock
             { type: "clock", value: "9876-05-04 03:21:" },
+            // menu
             { type: "menu", name: "CLOCK" },
             { type: "menu", name: "HOME" },
+            // pet
+            { type: "pet", name: "PiPi" },
         ];
         function runTimeout() {
             setTimeout(function () {
