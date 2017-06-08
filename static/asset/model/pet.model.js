@@ -101,16 +101,18 @@
             var frameOffset = 0;
             var action = null;
             return function (model, frame, freq) {
-                if (action) {
-                    action(model, frame - frameOffset, freq) && count--;
-                    if (count == 0) {
-                        frameOffset = 0;
-                        action = null;
-                    }
-                } else if (frame === 0 || frameOffset === 0) {
+                if (frame === 0 || frameOffset === 0) {
                     model.load(PiPi.stand);
                     frameOffset = frame + 1;
                     action = null;
+                } else if (action) {
+                    try {
+                    action(model, frame - frameOffset, freq) && count--;
+                    } catch(e) { console.log(frame, frameOffset); }
+                    if (count === 0) {
+                        frameOffset = 0;
+                        action = null;
+                    }
                 } else if (action === null) {
                     if (frame - frameOffset > 6 * (freq || 10)) {
                         action = undefined;

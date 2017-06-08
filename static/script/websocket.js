@@ -11,7 +11,7 @@
             var infoPanel = document.querySelector("#infoPanel");
             infoPanel.innerHTML = "";
             var infos = data.split("\n");
-            var data = JSON.parse(infos.pop());
+            data = JSON.parse(infos.pop());
             pet = pp3d.asset.model.pet[data.pet];
             infos.forEach(function (line) {
                 var p = document.createElement("p");
