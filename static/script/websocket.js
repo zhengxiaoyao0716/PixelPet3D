@@ -8,7 +8,10 @@
         "/info/get": function (data) {
             // expect: %s: %s\nAuthor: %s\nAddress: %s
             var infoPanel = document.querySelector("#infoPanel");
-            data.split("\n").forEach(function (line) {
+            var infos = data.split("\n");
+            var data = JSON.parse(infos.pop());
+            pet = pp3d.asset.model.pet[data.pet];
+            infos.forEach(function (line) {
                 var p = document.createElement("p");
                 infoPanel.appendChild(p);
                 p.textContent = line;
@@ -45,8 +48,7 @@
                         "L": pet.action.waggleLeft,
                         "R": pet.action.waggleRight,
                     };
-                    var title = pp3d.asset.model.game[data.name];
-                    var colors = title[1];
+                    var title = data.name == "pass" ? null : pp3d.asset.model.game[data.name];
 
                     var frame = 0;
                     (function animate() {
@@ -54,6 +56,7 @@
                             if (frame % 10 == 0) {
                                 var index = frame / 10;
                                 if (index <= 6) {
+                                    var colors = title[1];
                                     model.load(
                                         title[0],
                                         colors.slice(index % colors.length).concat(colors.slice(0, index % colors.length)),
