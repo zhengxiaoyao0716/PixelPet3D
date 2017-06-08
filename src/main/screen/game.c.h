@@ -59,7 +59,7 @@ static void gameAction(char action, IN char *query, OUT char *sendBuf)
         }
         else
         {
-            renderScreen("{\"type\": \"game\", \"name\": \"%s\", \"value\": \%c\}", "pass", action);
+            renderScreen("{\"type\": \"game\", \"name\": \"%s\", \"value\": \"\%c\"\}", "pass", action);
         }
     }
     else

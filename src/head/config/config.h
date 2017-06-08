@@ -12,6 +12,7 @@ typedef struct
 typedef struct
 {
 	PP3DInfoType Info;
+	const char *Pet;
 } __PP3D_CONFIG;
 extern __PP3D_CONFIG PP3DConfig;
 

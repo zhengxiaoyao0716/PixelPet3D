@@ -5,7 +5,9 @@
 static void getInfoHandler(IN char *query, OUT char *sendBuf)
 {
 	InfoType Info = Config.Info;
-	sprintf(sendBuf, "/info/get\n%s: %s\nAuthor: %s\nAddress: %s", Info.Name, Info.Vers, Info.Auth, Info.Addr);
+	sprintf(sendBuf, "/info/get\n%s: %s\nAuthor: %s\nAddress: %s\n{\"pet\": \"%s\"}",
+			Info.Name, Info.Vers, Info.Auth, Info.Addr,
+			Config.Pet);
 }
 
 int main(int argc, char **argv)

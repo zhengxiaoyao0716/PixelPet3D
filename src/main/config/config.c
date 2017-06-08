@@ -7,4 +7,5 @@ __PP3D_CONFIG PP3DConfig = {
 		Auth : "zhengxiaoyao0716",
 		Addr : "github.com/zhengxiaoyao0716",
 	},
+	Pet : "PiPi",
 };
