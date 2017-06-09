@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="Description" content="" />
+    <link rel="shortcut icon" href="http://os.zheng0716.com/static/image/favicon.ico" />
+    <title>PixelPet3D 展示</title>
+    <link href="./static/style/impress-demo.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="impress-not-supported">
+        <div class="fallback-message">
+            <p>请搭配<b>现代浏览器</b>食用，口感更加~~~</p>
+        </div>
+    </div>
+    <div class="hint">
+        <p>- 嵌入式计算 - 基于树莓派的电子宠物系统 -</p>
+    </div>
+    <div id="impress">
+        <div id="bored" class="step slide" data-x="0" data-y="0">
+            PixelPet3D - 3D电子宠物
+            <br />
+            <img src="./static/assets/实体.gif" height="600" width="800" />
+        </div>
+        <div class="step slide" data-x="-1000" data-y="500" data-rotate="30">
+            <b>
+                <u>需求分析</u>
+                <br />
+            </b>
+            <br />
+            <span>【用树莓派完成一个嵌入式系统】</span>
+            <br />
+            <br />
+            <p style="color: #33f">
+                具体来说，我组计划用树莓派外接一个
+                <b class="positioning" style="color: #60f">小型显示屏</b> 作为核心，辅以一个用透明塑料片自制的
+                <b class="positioning" style="color: #60f">金字塔形装置</b> ，完成一个伪全息投影的立体的
+                <b class="positioning" style="color: #60f">电子宠物系统</b>。
+            </p>
+        </div>
+        <div class="step slide" data-x="1000" data-y="500" data-rotate="-30">
+            <b><u>规格说明</u></b><br /><br />
+            <b>1、关于显示屏：</b><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;通过Web服务，利用用户移动设备作为显示器，在浏览器中用 `WebGL` 技术渲染画面，多个设备可以同时访问Web服务，同步控制与展示。<br
+            /><br />
+            <b>2、关于金字塔：</b><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将一张透明塑料片裁剪折叠成一个金字塔形装置，尖端贴在屏幕上，金字塔的四面将分别反射屏幕上的四个预先设计好角度的图案，从而在三维空间形成一个立体影像。<br
+            /><br />
+            <b>3、关于电子宠物：</b><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;宠物本体由一个三维16*16*16的像素数组来表示，通过 `threejs`
+            进行绘制。宠物的动作有多个三维数组作为关键帧，组成帧动画来表示。
+            <br /><br />
+        </div>
+        <div id="ing" class="step" data-x="0" data-y="1200" data-scale="2">
+            &nbsp;&nbsp;&nbsp;&nbsp;系统分成
+            <b class="rotating" style="color: #f06">核心层</b>
+            <b class="rotating" style="color: #0f6">展示层</b>
+            <b class="rotating" style="color: #06f">驱动层</b> 三层结构
+        </div>
+        <div class="step" data-x="0" data-y="2200">
+            <b>核心层：</b>
+            <p style="font-size: 30px">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;处理电子宠物的基础逻辑，包括宠物的信息、当前的显示内容、用户交互控制、附加功能与小游戏等。
+            </p>
+            <b>显示层：</b>
+            <p style="font-size: 30px">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将经由驱动层转发的核心层运算结果渲染并呈现给用户，同时也负责处理用户的交互控制操作。
+            </p>
+            <b>驱动层：</b>
+            <p style="font-size: 30px">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;连接核心层与显示层，将显示层用户的操作发往核心层进行处理，并将结果返还。另外还负责处理诸如多设备同步等问题。
+            </p>
+        </div>
+        <div class="step" data-x="3200" data-y="2200" data-rotate="180">
+            <center>
+                <b><u>屏幕动图<br /></u></b>
+            </center>
+        </div>
+        <div class="step" data-x="3200" data-y="2200" data-rotate="180" data-rotate-y="180" data-scale="1.5">
+            <center>
+                <img src="./static/assets/屏幕.gif">
+            </center>
+        </div>
+        <div class="step slide" data-x="4200" data-y="1700" data-rotate="210">
+            <b><u>模块设计<br /></u></b>
+            <br />
+            <b>1. C:</b>
+            <a href="https://github.com/zhengxiaoyao0716/PixelPet3D/tree/core" target="_blank">core分支</a>
+            <br />
+            <p style="font-size: 24px; color: #06f; margin-left: 60px;">基础逻辑部分</p>
+            <p style="font-size: 24px; color: #60f; margin-left: 60px;">包含三个主要模块：</p>
+            <br />
+            <table>
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>对应的包</th>
+                        <th>职责</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>配置模块</td>
+                        <td>config</td>
+                        <td>管理基本信息和配置，如应用名、版本号、作者、地址、宠物名称等</td>
+                    </tr>
+                    <tr>
+                        <td>放映模块</td>
+                        <td>screen</td>
+                        <td>屏幕内容的处理，根据用户操作执行相应的逻辑运算并进行界面渲染内容的切换</td>
+                    </tr>
+                    <tr>
+                        <td>服务模块</td>
+                        <td>server</td>
+                        <td>监听socket服务，将驱动层发来的请求转发给相应的控制器处理并返回结果</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="step slide" data-x="2200" data-y="1700" data-rotate="150">
+            <b><u>模块设计<br /></u></b>
+            <br />
+            <b>2. JavaScript:</b>
+            <a href="https://github.com/zhengxiaoyao0716/PixelPet3D/tree/browser" target="_blank">brower分支</a>
+            <br />
+            <p style="font-size: 24px; color: #06f; margin-left: 60px;">基于浏览器的UI视觉呈现</p>
+            <p style="font-size: 24px; color: #60f; margin-left: 60px;">主要包含四个模块：</p>
+            <br />
+            <br />
+            <table>
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>主要脚本</th>
+                        <th>职责</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>核心模块</td>
+                        <td>pp3d.js</td>
+                        <td>基本场景搭建、模型渲染</td>
+                    </tr>
+                    <tr>
+                        <td>编辑模块</td>
+                        <td>pp3d-editor.js</td>
+                        <td>提供创建和编辑模型的编辑器</td>
+                    </tr>
+                    <tr>
+                        <td>交互模块</td>
+                        <td>websocket.js</td>
+                        <td>处理用户操作，接收后端数据</td>
+                    </tr>
+                    <tr>
+                        <td>资源模块</td>
+                        <td>*.model.js</td>
+                        <td>宠物、菜单、时钟等各种模型的配置加载</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="step slide" data-x="3200" data-y="1000" data-scale="1.5" data-rotate="180">
+            <b><u>模块设计<br /></u></b>
+            <br />
+            <b>3. Python (with Tornado):</b>
+            <a href="https://github.com/zhengxiaoyao0716/PixelPet3D/tree/server" target="_blank">server分支</a>
+            <br />
+            <p style="font-size: 24px; color: #06f; margin-left: 60px;">WebSocket服务器，连接树莓派（C语言）与用户浏览器（Js）</p>
+            <p style="font-size: 24px; color: #60f; margin-left: 60px;">包含两个模块：</p>
+            <br />
+            <br />
+            <table>
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>主要脚本</th>
+                        <th>职责</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>通信模块</td>
+                        <td>connect_core.py</td>
+                        <td>与核心层的数据交互</td>
+                    </tr>
+                    <tr>
+                        <td>服务模块</td>
+                        <td>main.py</td>
+                        <td>显示层的Web后端</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="step" data-x="4800" data-y="0" data-scale="2" data-rotate="180" data-rotate-y="-30" style="font-size: 30px;">
+            <center>
+                <b><u>系统集成<br /></u></b>
+                <p>系统呈插板式架构</p>
+                <p>
+                    主分支下执行 `run.sh` 脚本（命令： `./run.sh` ）就可以自动的拉取、编译并构建三个子分支的代码，组装完毕后开始部署运行。如果需要后台长期运行，请追加`-d`参数。
+                </p>
+            </center>
+        </div>
+        <div class="step" data-x="3200" data-y="0" data-scale="2" data-rotate="180" data-rotate-y="-30" style="font-size: 30px;">
+            <center>
+                <b><u>系统集成<br /></u></b>
+                <p>目标环境为装配Raspbian系统的树莓派</p>
+                <p>
+                    但也能在其它带有 `gcc` 和`python3` 环境的Linux系统下部署。注意，第一次部署过程请务必保证网络畅通以便拉取代码并下载依赖，最好挂上VPN，一些资源可能需要翻墙获取。
+                </p>
+            </center>
+        </div>
+        <div class="step" data-x="1600" data-y="0" data-scale="2" data-rotate="180" data-rotate-y="-30" style="font-size: 30px;">
+            <center>
+                <b><u>系统集成<br /></u></b>
+                <p>在树莓派|Linux系统上部署成功后</p>
+                <p>
+                    将会监听5000端口启动一个Web服务器，供局域网下设备访问。手机访问`http://部署设备的IP地址:5000`，配合定制的金字塔棱镜，就可以看到3D投影的电子宠物。
+                </p>
+            </center>
+        </div>
+        <div id="overview" class="step" data-x="1400" data-y="1000" data-scale="4.5"></div>
+    </div>
+
+    <!--<audio id="impress" src="./static/audio/DieLian.mp3" controls loop autoplay style="position: fixed; left: 0px; top: 0px; margin:10px;">蝶恋.mp3</audio>-->
+    <a id="impress" href="https://github.com/zhengxiaoyao0716/PixelPet3D" target="_blank" style="position: fixed; right: 0px; top: 30px; margin:10px;"><img src="http://os.zheng0716.com/static/image/github.svg"/></a>
+
+    <!-- scripts -->
+    <div style="display: none;">
+        <script src="./static/script/impress.js"></script>
+        <script>
+            impress().init();
+        </script>
+    </div>
+</body>
