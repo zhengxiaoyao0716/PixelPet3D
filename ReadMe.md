@@ -4,17 +4,17 @@
 ***
 ## 效果展示
 
-[屏幕视频](./doc/assets/屏幕.flv)
-[屏幕动图](./doc/assets/屏幕.gif)
+[屏幕视频](./doc/static/assets/屏幕.flv)
+[屏幕动图](./doc/static/assets/屏幕.gif)
 
-![屏幕](./doc/assets/屏幕.gif)
+![屏幕](./doc/static/assets/屏幕.gif)
 
 
-[实体动图](./doc/assets/实体.gif)
+[实体动图](./doc/static/assets/实体.gif)
 
-![实体](./doc/assets/实体.gif)
+![实体](./doc/static/assets/实体.gif)
 
-[编辑器使用示例](./doc/assets/编辑.flv)
+[编辑器使用示例](./doc/static/assets/编辑.flv)
 
 ***
 ## 系统集成
@@ -50,7 +50,7 @@
 ### 2. JavaScript: [brower分支](https://github.com/zhengxiaoyao0716/PixelPet3D/tree/browser)
 
     基于浏览器的UI视觉呈现
-    主要包含四个模块
+    主要包含四个模块：
 
 |名称|主要脚本|职责|
 |--|--|--|
