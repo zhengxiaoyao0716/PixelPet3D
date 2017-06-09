@@ -4,17 +4,17 @@
 ***
 ## 效果展示
 
-[屏幕视频](./doc/static/assets/屏幕.flv)
-[屏幕动图](./doc/static/assets/屏幕.gif)
+[屏幕视频](./docs/static/assets/屏幕.flv)
+[屏幕动图](./docs/static/assets/屏幕.gif)
 
-![屏幕](./doc/static/assets/屏幕.gif)
+![屏幕](./docs/static/assets/屏幕.gif)
 
 
-[实体动图](./doc/static/assets/实体.gif)
+[实体动图](./docs/static/assets/实体.gif)
 
-![实体](./doc/static/assets/实体.gif)
+![实体](./docs/static/assets/实体.gif)
 
-[编辑器使用示例](./doc/static/assets/编辑.flv)
+[编辑器使用示例](./docs/static/assets/编辑.flv)
 
 ***
 ## 系统集成
