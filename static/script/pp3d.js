@@ -52,8 +52,8 @@
             getCamera: function (index) { notInitError(); },
             /** @param {number} visibleLen */
             adjustDistance: function (visibleLen) { notInitError(); },
-            /** @param {boolean} adjustDistance @param {boolean} drawGrid */
-            initModel: function (adjustDistance, drawGrid) { notInitError(); },
+            /** @param {boolean} adjustDistance @param {boolean} drawHelper */
+            initModel: function (adjustDistance, drawHelper) { notInitError(); },
             get asset() {
                 return {
                     get model() { return model; },
@@ -179,9 +179,9 @@
     /**
      * Note: After this function executed, pp3d.sideLen cannot be changed again.
      * @param {boolean} [adjustDistance=true]
-     * @param {boolean} [drawGrid=false]
+     * @param {boolean} [drawHelper=false]
      */
-    pp3d.initModel = function (adjustDistance, drawGrid) {
+    pp3d.initModel = function (adjustDistance, drawHelper) {
         var sideLen = pp3d.sideLen;
         pp3d.__defineGetter__("sideLen", function () { return sideLen; });
         pp3d.__defineSetter__("sideLen", function () { throw new Error("Can't change sideLen after model initialized."); });
@@ -259,7 +259,7 @@
 
         var helperGroup = new THREE.Group();
         scene.add(helperGroup);
-        if (drawGrid) {
+        if (drawHelper) {
             // Bottom grids
             (function () {
                 var gridHelper = new THREE.GridHelper(sideLen, sideLen, 0x666666, 0x333333);
@@ -299,7 +299,8 @@
             return Array.apply(null, { length: sideLen }).map(function (_, y) {
                 return Array.apply(null, { length: sideLen }).map(function (_, z) {
                     var mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial());
-                    meshesGroup.add(mesh);
+                    // For mobile, the would still be render if not do that? 
+                    drawHelper && meshesGroup.add(mesh);
                     mesh.position.set.apply(mesh.position, posFromCoord(x, y, z));
                     mesh.material.visible = false;
                     return mesh;
@@ -370,8 +371,10 @@
                     var material = mesh.material;
                     material.color.setHex(color);
                     mesh.material.visible = true;
+                    drawHelper || meshesGroup.add(mesh);
                 } else {
                     mesh.material.visible = false;
+                    drawHelper || meshesGroup.remove(mesh);
                 }
                 if (mark) {
                     var box = new THREE.BoxHelper(mesh, color);
@@ -402,14 +405,17 @@
                         var material = mesh.material;
                         material.color.setHex(colors[pixs[index]]);
                         mesh.material.visible = true;
+                        drawHelper || meshesGroup.add(mesh);
                     } else if (!keep) {
                         mesh.material.visible = false;
+                        drawHelper || meshesGroup.remove(mesh);
                     }
                 }, offset, rotate == null ? "xyz" : rotate);
             },
             clean: function () {
                 iterMeshs(function (mesh) {
                     mesh.material.visible = false;
+                    drawHelper || meshesGroup.remove(mesh);
                 });
             },
             dump: function () {
