@@ -4,17 +4,17 @@
 ***
 ## 效果展示
 
-[屏幕视频](./screenshot/屏幕.flv)
-[屏幕动图](./screenshot/屏幕.gif)
+[屏幕视频](./doc/assets/屏幕.flv)
+[屏幕动图](./doc/assets/屏幕.gif)
 
-![屏幕](./screenshot/屏幕.gif)
+![屏幕](./doc/assets/屏幕.gif)
 
 
-[实体动图](./screenshot/实体.gif)
+[实体动图](./doc/assets/实体.gif)
 
-![实体](./screenshot/实体.gif)
+![实体](./doc/assets/实体.gif)
 
-[编辑器使用示例](./screenshot/编辑.flv)
+[编辑器使用示例](./doc/assets/编辑.flv)
 
 ***
 ## 系统集成
